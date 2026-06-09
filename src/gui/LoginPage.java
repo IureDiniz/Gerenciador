@@ -4,11 +4,6 @@
  */
 package gui;
 
-import dao.UserDAO;
-import java.sql.SQLException;
-import javax.swing.JOptionPane;
-import model.User;
-
 /**
  *
  * @author iure
@@ -99,26 +94,9 @@ public class LoginPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
-        UserDAO userDAO = new UserDAO();
-
-        try{
-            User user = userDAO.getbyLogin(txfLogin.getText());
-            
-            if(user == null) {
-                JOptionPane.showMessageDialog(null, "O usuário inserido não existe");
-                
-            } else {
-                
-                
-                if(user.getSenha().equals(pswSenha.getText())){
-                    JOptionPane.showMessageDialog(null, "Login realizado com sucesso");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Usuário ou senha invalidos");
-                }
-            }
-        } catch(SQLException e) {
-            JOptionPane.showMessageDialog(null, "Ocorreu um erro ao tentar fazer login: \n" + e);
-        }
+        InitialPage initialPage = new InitialPage();
+        initialPage.setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     /**
