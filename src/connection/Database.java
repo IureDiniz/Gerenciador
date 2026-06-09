@@ -28,36 +28,36 @@ public class Database {
     private void createDatabase() throws SQLException {
 
         String createTable = """
-            CREATE TABLE IF NOT EXISTS tbUser (
-                USE_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                USE_LOGIN TEXT NOT NULL,
-                USE_PASSWORD TEXT NOT NULL,
-                USE_EMAIL TEXT,
-                USE_TYPE TEXT NOT NULL,
-                USE_ACTIVE INTEGER NOT NULL
+            CREATE TABLE IF NOT EXISTS usuarios (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT NOT NULL CHECK(length(nome) <= 100),
+                email TEXT NOT NULL UNIQUE CHECK(length(email) <= 100),
+                senha TEXT NOT NULL CHECK(length(senha) <= 255),
+                tipo TEXT NOT NULL CHECK(tipo IN ('Funcionario', 'Supervisor', 'Gerente')),
+                ativo INTEGER NOT NULL DEFAULT 1
             );
             """;
 
         String insertAdmin = """
-            INSERT INTO tbUser (
-                USE_ID,
-                USE_LOGIN,
-                USE_PASSWORD,
-                USE_EMAIL,
-                USE_TYPE,
-                USE_ACTIVE
+            INSERT INTO usuarios (
+                id,
+                nome,
+                email,
+                senha,
+                tipo,
+                ativo
             )
             SELECT
                 1,
-                'admin',
-                'admin',
-                NULL,
-                'GERENTE',
+                'Administrador',
+                'admin@empresa.com',
+                '123456',
+                'Supervisor',
                 1
             WHERE NOT EXISTS (
                 SELECT 1
-                FROM tbUser
-                WHERE USE_ID = 1
+                FROM usuarios
+                WHERE id = 1
             );
             """;
 
