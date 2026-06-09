@@ -14,6 +14,6 @@ public class EquipamentoDAO {
     public static Equipamento getEquipamento(int id){
         return null;
     }
-    
-    
+
+
 }

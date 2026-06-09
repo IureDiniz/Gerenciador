@@ -11,13 +11,13 @@ package model;
 public class Categoria {
     private int id;
     private String nome;
-    
+
     //construtor
     public Categoria(int id, String nome){
         this.id = id;
         this.nome = nome;
     }
-    
+
     //getters e setters
     public int getId() {
         return id;
@@ -33,6 +33,6 @@ public class Categoria {
 
     public void setNome(String nome) {
         this.nome = nome;
-    } 
-    
+    }
+
 }

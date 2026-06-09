@@ -17,7 +17,7 @@ public class Equipamento {
     private int categoria_id;
     private String localizacao;
     private String status;
-    
+
     //construtor
     public Equipamento(int id, String nome, String descricao, int quantidade, int categoria_id, String localizacao, String status){
         this.id = id;
@@ -28,7 +28,7 @@ public class Equipamento {
         this.localizacao = localizacao;
         this.status = status;
     }
-    
+
     //verifica se o equipamento do ID fornecido existe
     public static boolean existe_equipamento(int id){
         if (EquipamentoDAO.getEquipamento(id) != null){
@@ -44,13 +44,13 @@ public class Equipamento {
         String m = "ID: " + this.id + "\n"
                 + "Nome: " + this.nome + "\n"
                 + "Descrição: " + this.descricao + "\n"
-                + "Quantidade: " + this.quantidade + "\n" 
+                + "Quantidade: " + this.quantidade + "\n"
                 + "ID categoria: " + this.categoria_id + "\n"
                 + "Localização: " + this.localizacao + "\n"
                 + "Status: " + this.status + "\n";
         return m;
     }
-    
+
     //getters e setters
     public int getId() {
         return id;
@@ -107,5 +107,5 @@ public class Equipamento {
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
 }

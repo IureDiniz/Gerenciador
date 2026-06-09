@@ -32,17 +32,17 @@ public class User {
     public boolean isAtivo() {
         return ativo;
     }
-    
+
     public User(int id, String login, String senha, String email, String tipo, boolean ativo){
         this.id = id;
         this.login = login;
         this.senha = senha;
         this.email = email;
         this.tipo = tipo;
-        this.ativo = ativo;        
+        this.ativo = ativo;
     }
-    
-    
+
+
     @Override
     public String toString(){
         return  "ID - " + this.id + "\n" +

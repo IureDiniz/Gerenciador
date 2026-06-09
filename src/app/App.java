@@ -2,9 +2,7 @@ package app;
 
 import java.sql.SQLException;
 
-import dao.UserDAO;
 import gui.LoginPage;
-import model.User;
 
 public class App {
 
