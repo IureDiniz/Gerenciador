@@ -14,24 +14,24 @@ private Connection con;
         con = Database.getInstance().getConnection();
     }
     
-    public User getbyLogin(String login) throws SQLException{
-        String sql = "SELECT * FROM tbUser WHERE USE_LOGIN = ?";
+    public User getbyLogin(String nome) throws SQLException{
+        String sql = "SELECT * FROM usuarios WHERE nome = ?";
         
         PreparedStatement stmt = con.prepareStatement(sql);
-        stmt.setString(1, login);
+        stmt.setString(1, nome);
         
         ResultSet rs = stmt.executeQuery();
         
         
         if (rs.next()){
-            int id = rs.getInt("USE_ID");
-            String logi = rs.getString("USE_LOGIN");
-            String senha = rs.getString("USE_PASSWORD");
-            String tipo = rs.getString("USE_TYPE");
-            String email = rs.getString("USE_EMAIL");
+            int id = rs.getInt("id");
+            String logi = rs.getString("nome");
+            String senha = rs.getString("senha");
+            String tipo = rs.getString("tipo");
+            String email = rs.getString("email");
             boolean ativo;
             
-            if(rs.getInt("USE_ACTIVE") == 0){
+            if(rs.getInt("ativo") == 0){
                 ativo = false;
             } else{
                 ativo = true;

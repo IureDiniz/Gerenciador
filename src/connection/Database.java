@@ -16,7 +16,7 @@ public class Database {
     
     public Database(){
         try{
-          this.connection = DriverManager.getConnection("jdbc:sqlite:tools/database.db");
+          this.connection = DriverManager.getConnection("jdbc:sqlite:tools/Estoque.db");
           
           createDatabase();
           
