@@ -130,4 +130,18 @@ public class EquipamentoDAO {
             return null;
         }
     }
+    
+    public void inserir(Equipamento equipamento) throws SQLException{
+        String sql = "INSERT INTO equipamentos VALUES(?, ?, ?, ?, ?, ?)";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setString(1, equipamento.getNome());
+        stmt.setString(2, equipamento.getDescricao());
+        stmt.setInt(3, equipamento.getQuantidade());
+        stmt.setInt(4, equipamento.getCategoria_id());
+        stmt.setString(5, equipamento.getLocalizacao());
+        stmt.setString(6, equipamento.getStatus());
+
+        ResultSet rs = stmt.executeQuery();
+    }
 }
