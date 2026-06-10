@@ -16,7 +16,7 @@ public class CategoriaDAO {
     }
     
     public Categoria pegarPorId(int id) throws SQLException {
-        String sql = "SELECT * FROM categoria WHERE id = ?";
+        String sql = "SELECT * FROM categorias WHERE id = ?";
 
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setInt(1, id);
@@ -37,7 +37,7 @@ public class CategoriaDAO {
     }
     
      public Categoria pegarTodos() throws SQLException {
-        String sql = "SELECT * FROM categoria";
+        String sql = "SELECT * FROM categorias";
 
         PreparedStatement stmt = con.prepareStatement(sql);
 
@@ -54,5 +54,33 @@ public class CategoriaDAO {
         } else {
             return null;
         }
+    }
+     
+     public void inserir( Categoria categoria) throws SQLException{
+        String sql = "INSERT INTO categorias VALUES(?)";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setString(1, categoria.getNome());
+
+        ResultSet rs = stmt.executeQuery();
+    }
+    
+    public void deletarPorId(int id) throws SQLException{
+        String sql = "DELETE FROM categorias WHERE id = ?";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setInt(1, id);
+
+        ResultSet rs = stmt.executeQuery();
+    }
+    
+    public void atualizar(Categoria categoria) throws SQLException{
+        String sql = "UPDATE equipamentos SET nome = ? WHERE id = ?";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setString(1, categoria.getNome());
+        stmt.setInt(2, categoria.getId());
+
+        ResultSet rs = stmt.executeQuery();
     }
 }
