@@ -3,11 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/iure/eclipse-workspace/Gerenciador/src/dao/EquipamentoDAO.java</file>
+            <file>file:/home/iure/eclipse-workspace/Gerenciador/src/model/Equipamento.java</file>
             <file>file:/home/iure/eclipse-workspace/Gerenciador/src/app/App.java</file>
-            <file>file:/home/iure/eclipse-workspace/Gerenciador/src/gui/LoginPage.java</file>
-            <file>file:/home/iure/eclipse-workspace/Gerenciador/src/dao/UserDAO.java</file>
-            <file>file:/home/iure/eclipse-workspace/Gerenciador/src/model/User.java</file>
-            <file>file:/home/iure/eclipse-workspace/Gerenciador/src/connection/Database.java</file>
+            <file>file:/home/iure/eclipse-workspace/Gerenciador/src/dao/UsuarioDAO.java</file>
+            <file>file:/home/iure/eclipse-workspace/Gerenciador/src/model/Usuario.java</file>
         </group>
     </open-files>
 </project-private>

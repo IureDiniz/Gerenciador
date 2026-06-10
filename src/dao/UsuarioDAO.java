@@ -6,16 +6,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import connection.Database;
-import model.User;
+import model.Usuario;
 
-public class UserDAO {
-private Connection con;
 
-    public UserDAO(){
+public class UsuarioDAO {
+    private Connection con;
+    
+    public UsuarioDAO(){
         con = Database.getInstance().getConnection();
     }
-
-    public User getbyLogin(String nome) throws SQLException{
+    
+    public Usuario pegarPorNome(String nome) throws SQLException{
+        
         String sql = "SELECT * FROM usuarios WHERE nome = ?";
 
         PreparedStatement stmt = con.prepareStatement(sql);
@@ -26,7 +28,7 @@ private Connection con;
 
         if (rs.next()){
             int id = rs.getInt("id");
-            String logi = rs.getString("nome");
+            String nom = rs.getString("nome");
             String senha = rs.getString("senha");
             String tipo = rs.getString("tipo");
             String email = rs.getString("email");
@@ -37,8 +39,8 @@ private Connection con;
             } else{
                 ativo = true;
             }
-
-            User u = new User(id, logi, senha, email, tipo, ativo);
+            
+            Usuario u = new Usuario(id, nom, senha, email, tipo, ativo);
 
             return u;
 

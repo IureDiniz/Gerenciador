@@ -1,14 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 import dao.EquipamentoDAO;
-/**
- *
- * @author Estudante
- */
+import java.sql.SQLException;
+
 public class Equipamento {
     private int id;
     private String nome;
@@ -30,8 +23,10 @@ public class Equipamento {
     }
 
     //verifica se o equipamento do ID fornecido existe
-    public static boolean existe_equipamento(int id){
-        if (EquipamentoDAO.getEquipamento(id) != null){
+    public static boolean existe_equipamento(int id) throws SQLException{
+        EquipamentoDAO equiDAO = new EquipamentoDAO();
+        
+        if (equiDAO.pegarPorId(id) != null){
             return true;
         }else{
             return false;
