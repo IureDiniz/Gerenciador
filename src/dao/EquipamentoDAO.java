@@ -56,14 +56,14 @@ public class EquipamentoDAO {
 
         if (rs.next()) {
             int i = rs.getInt("id");
-            String nom = rs.getString("nome");
+            String nome = rs.getString("nome");
             String descricao = rs.getString("descricao");
             int quantidade = rs.getInt("quantidade");
             int categoria = rs.getInt("categoria_id");
             String localizacao = rs.getString("localizacao");
             String status = rs.getString("status");
 
-            Equipamento e = new Equipamento(id, nom, descricao, quantidade, categoria, localizacao, status);
+            Equipamento e = new Equipamento(i, nome, descricao, quantidade, categoria, localizacao, status);
             
             return e;
 
