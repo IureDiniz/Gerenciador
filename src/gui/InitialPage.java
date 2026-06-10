@@ -32,6 +32,7 @@ public class InitialPage extends JFrame {
     private final CardLayout cardLayout;
     private final JPanel contentPanel;
 
+    // Janela principal
     public InitialPage() {
         super("Gerenciador");
         cardLayout = new CardLayout();
@@ -60,6 +61,7 @@ public class InitialPage extends JFrame {
         showScreen("home");
     }
 
+    // Tela inicial
     private JPanel createHomePanel() {
         JPanel panel = createBasePanel("Gerenciador de Estoque");
 
@@ -75,6 +77,7 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Lista de usuarios
     private JPanel createUserListPanel() {
         JPanel panel = createBasePanel("Lista de Usuarios");
         String[] columns = {"Nome", "Status"};
@@ -103,6 +106,7 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Formulario de usuario
     private JPanel createUserFormPanel(String title, boolean editor) {
         JPanel panel = createBasePanel(title);
         JPanel form = createFormPanel();
@@ -125,6 +129,7 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Tela de historico
     private JPanel createHistoryPanel() {
         JPanel panel = createBasePanel("Historico");
         String[] columns = {"Usuario", "Hora", "Data", "Atividade"};
@@ -142,6 +147,7 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Lista de movimentacoes
     private JPanel createMovementListPanel() {
         JPanel panel = createBasePanel("Lista de Movimentacoes");
         String[] columns = {"Tipo", "Data"};
@@ -169,6 +175,7 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Formulario de movimentacao
     private JPanel createMovementFormPanel(String title, boolean editor) {
         JPanel panel = createBasePanel(title);
         JPanel form = createFormPanel();
@@ -194,6 +201,7 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Equipamentos selecionados
     private JPanel createSelectedEquipmentPanel() {
         JPanel panel = createBasePanel("Equipamentos Selecionados");
         String[] columns = {"Equipamento", "Quantidade"};
@@ -212,6 +220,7 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Lista de equipamentos
     private JPanel createEquipmentListPanel() {
         JPanel panel = createBasePanel("Lista de Equipamentos");
         String[] columns = {"ID ou Nome", "Quantidade"};
@@ -240,6 +249,7 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Formulario de equipamento
     private JPanel createEquipmentFormPanel(String title, boolean editor) {
         JPanel panel = createBasePanel(title);
         JPanel form = createFormPanel();
@@ -263,6 +273,7 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Lista de categorias
     private JPanel createCategoryListPanel() {
         JPanel panel = createBasePanel("Lista de Categorias");
         JList<String> list = new JList<>(new String[]{"Informatica", "Ferramentas", "Escritorio"});
@@ -277,6 +288,7 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Tela de relatorios
     private JPanel createReportPanel() {
         JPanel panel = createBasePanel("Relatorios");
 
@@ -304,6 +316,7 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Painel padrao das telas
     private JPanel createBasePanel(String title) {
         JPanel panel = new JPanel(new BorderLayout(0, 16));
         panel.setBorder(BorderFactory.createEmptyBorder(24, 32, 24, 32));
@@ -315,24 +328,28 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Painel padrao de formularios
     private JPanel createFormPanel() {
         JPanel form = new JPanel(new GridBagLayout());
         form.setBorder(BorderFactory.createEmptyBorder(8, 120, 8, 120));
         return form;
     }
 
+    // Painel padrao de botoes
     private JPanel createButtonPanel() {
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         buttons.setBorder(BorderFactory.createEmptyBorder(12, 0, 0, 0));
         return buttons;
     }
 
+    // Botao de navegacao
     private JButton createNavigationButton(String text, String screen) {
         JButton button = new JButton(text);
         button.addActionListener(evt -> showScreen(screen));
         return button;
     }
 
+    // Tabela padrao
     private JTable createTable(String[] columns, Object[][] rows) {
         JTable table = new JTable(new DefaultTableModel(rows, columns) {
             @Override
@@ -345,21 +362,25 @@ public class InitialPage extends JFrame {
         return table;
     }
 
+    // Campo de texto
     private void addTextField(JPanel form, String label, String value) {
         JTextField field = new JTextField(value, 24);
         addFormRow(form, label, field);
     }
 
+    // Campo de senha
     private void addPasswordField(JPanel form, String label, String value) {
         JPasswordField field = new JPasswordField(value, 24);
         addFormRow(form, label, field);
     }
 
+    // Campo de selecao
     private void addComboBox(JPanel form, String label, String[] values) {
         JComboBox<String> comboBox = new JComboBox<>(values);
         addFormRow(form, label, comboBox);
     }
 
+    // Campo de descricao
     private void addTextArea(JPanel form, String label, String value) {
         JTextArea area = new JTextArea(value, 4, 24);
         area.setLineWrap(true);
@@ -367,6 +388,7 @@ public class InitialPage extends JFrame {
         addFormRow(form, label, new JScrollPane(area));
     }
 
+    // Linha do formulario
     private void addFormRow(JPanel form, String labelText, java.awt.Component field) {
         int row = form.getComponentCount() / 2;
 
@@ -387,6 +409,7 @@ public class InitialPage extends JFrame {
         form.add(field, fieldConstraints);
     }
 
+    // Troca de tela
     private void showScreen(String screen) {
         cardLayout.show(contentPanel, screen);
     }
