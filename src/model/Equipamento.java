@@ -1,5 +1,6 @@
 package model;
 import dao.EquipamentoDAO;
+import java.sql.SQLException;
 
 public class Equipamento {
     private int id;
@@ -22,8 +23,10 @@ public class Equipamento {
     }
 
     //verifica se o equipamento do ID fornecido existe
-    public static boolean existe_equipamento(int id){
-        if (EquipamentoDAO.getEquipamento(id) != null){
+    public static boolean existe_equipamento(int id) throws SQLException{
+        EquipamentoDAO equiDAO = new EquipamentoDAO();
+        
+        if (equiDAO.pegarPorId(id) != null){
             return true;
         }else{
             return false;
