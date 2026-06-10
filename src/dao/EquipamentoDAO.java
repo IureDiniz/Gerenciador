@@ -144,4 +144,13 @@ public class EquipamentoDAO {
 
         ResultSet rs = stmt.executeQuery();
     }
+    
+    public void deletarPorId(int id) throws SQLException{
+        String sql = "DELETE FROM equipamentos WHERE id = ?";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setInt(1, id);
+
+        ResultSet rs = stmt.executeQuery();
+    }
 }
