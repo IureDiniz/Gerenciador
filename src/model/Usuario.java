@@ -39,10 +39,10 @@ public class Usuario {
         this.senha = senha;
         this.email = email;
         this.tipo = tipo;
-        this.ativo = ativo;        
+        this.ativo = ativo;
     }
-    
-    
+
+
     @Override
     public String toString(){
         return  "ID - " + this.id + "\n" +

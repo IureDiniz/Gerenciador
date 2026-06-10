@@ -9,22 +9,22 @@ import javax.swing.JOptionPane;
 
 public class Database {
 	private static Database INSTANCE = null;
-    
-    Connection connection = null;
-    
 
-    
+    Connection connection = null;
+
+
+
     public Database(){
         try{
           this.connection = DriverManager.getConnection("jdbc:sqlite:tools/Estoque.db");
-          
+
           createDatabase();
-          
+
         }catch(SQLException e){
             JOptionPane.showMessageDialog(null, "Ocorreu o seguinte erro ao tentar criar uma conexão: \n" + e);
         }
     }
-   
+    
     private void createDatabase() throws SQLException {
 
         String createTable = """
@@ -67,19 +67,19 @@ public class Database {
         }
     }
 
-    
+
     public static Database getInstance(){
         if(INSTANCE == null){
             INSTANCE = new Database();
         }
         return INSTANCE;
     }
-    
-    
+
+
     public Connection getConnection(){
         return this.connection;
     }
-    
+
     public void closeConnection() throws SQLException{
         this.connection.close();
     }

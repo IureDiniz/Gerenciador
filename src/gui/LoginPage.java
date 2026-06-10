@@ -4,17 +4,20 @@
  */
 package gui;
 
+<<<<<<< HEAD
 import dao.UsuarioDAO;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import model.Usuario;
 
+=======
+>>>>>>> 5770b52e76ae1170dd8ca09dc11eaee93b1d862e
 /**
  *
  * @author iure
  */
 public class LoginPage extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginPage.class.getName());
 
     /**
@@ -99,6 +102,7 @@ public class LoginPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
+<<<<<<< HEAD
         UsuarioDAO userDAO = new UsuarioDAO();
 
         try{
@@ -119,6 +123,11 @@ public class LoginPage extends javax.swing.JFrame {
         } catch(SQLException e) {
             JOptionPane.showMessageDialog(null, "Ocorreu um erro ao tentar fazer login: \n" + e);
         }
+=======
+        InitialPage initialPage = new InitialPage();
+        initialPage.setVisible(true);
+        dispose();
+>>>>>>> 5770b52e76ae1170dd8ca09dc11eaee93b1d862e
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     /**
@@ -128,7 +137,7 @@ public class LoginPage extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

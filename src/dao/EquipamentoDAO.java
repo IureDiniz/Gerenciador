@@ -22,13 +22,26 @@ public class EquipamentoDAO {
         stmt.setString(1, nome);
         
         ResultSet rs = stmt.executeQuery();
+        ArrayList<Equipamento>  equips = new ArrayList<Equipamento>();
         
-        if (rs.next()) {
+        while (rs.next()) {
            int id = rs.getInt("id");
            String nom = rs.getString("nome");
            String descricao = rs.getString("descricao");
            int quantidade = rs.getInt("quantidade");
+           int categoria = rs.getInt("categoria_id");
+           String localizacao = rs.getString("localizacao");
+           String status = rs.getString("status");
            
+           Equipamento e = new Equipamento(id, nom, descricao, quantidade, categoria, localizacao, status);
+           
+           equips.add(e);
         }
+        
+        if(equips.isEmpty()){
+            return null;
+        }
+        
+        return equips;
     }
 }
