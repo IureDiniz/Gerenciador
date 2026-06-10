@@ -35,4 +35,24 @@ public class CategoriaDAO {
             return null;
         }
     }
+    
+     public Categoria pegarTodos() throws SQLException {
+        String sql = "SELECT * FROM categoria";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            int id = rs.getInt("id");
+            String nome = rs.getString("nome");
+
+            Categoria e = new Categoria(id, nome);
+            
+            return e;
+
+        } else {
+            return null;
+        }
+    }
 }
