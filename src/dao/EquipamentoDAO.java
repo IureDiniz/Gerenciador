@@ -153,4 +153,19 @@ public class EquipamentoDAO {
 
         ResultSet rs = stmt.executeQuery();
     }
+    
+    public void atualizar(Equipamento equipamento) throws SQLException{
+        String sql = "UPDATE equipamentos SET nome = ?, descricao = ?, quantidade = ?, categoria_id = ?, localizacao = ?, status = ? WHERE id = ?";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setString(1, equipamento.getNome());
+        stmt.setString(2, equipamento.getDescricao());
+        stmt.setInt(3, equipamento.getQuantidade());
+        stmt.setInt(4, equipamento.getCategoria_id());
+        stmt.setString(5, equipamento.getLocalizacao());
+        stmt.setString(6, equipamento.getStatus());
+        stmt.setInt(7, equipamento.getId());
+
+        ResultSet rs = stmt.executeQuery();
+    }
 }
