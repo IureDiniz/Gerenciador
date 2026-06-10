@@ -4,10 +4,10 @@
  */
 package gui;
 
-import dao.UserDAO;
+import dao.UsuarioDAO;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
-import model.User;
+import model.Usuario;
 
 /**
  *
@@ -99,10 +99,10 @@ public class LoginPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
-        UserDAO userDAO = new UserDAO();
+        UsuarioDAO userDAO = new UsuarioDAO();
 
         try{
-            User user = userDAO.getbyLogin(txfLogin.getText());
+            Usuario user = userDAO.getbyLogin(txfLogin.getText());
             
             if(user == null) {
                 JOptionPane.showMessageDialog(null, "O usuário inserido não existe");

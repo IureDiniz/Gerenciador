@@ -24,7 +24,7 @@ public class Database {
             JOptionPane.showMessageDialog(null, "Ocorreu o seguinte erro ao tentar criar uma conexão: \n" + e);
         }
     }
-    
+   
     private void createDatabase() throws SQLException {
 
         String createTable = """
