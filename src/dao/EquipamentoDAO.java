@@ -45,6 +45,36 @@ public class EquipamentoDAO {
 
         return equips;
     }
+    
+    public ArrayList<Equipamento> listarPorCategoria(int categoria_id) throws SQLException {
+        String sql = "SELECT * FROM equipamentos WHERE categoria_id = ?";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setInt(1, categoria_id);
+
+        ResultSet rs = stmt.executeQuery();
+        ArrayList<Equipamento> equips = new ArrayList<Equipamento>();
+
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nome = rs.getString("nome");
+            String descricao = rs.getString("descricao");
+            int quantidade = rs.getInt("quantidade");
+            int categoria = rs.getInt("categoria_id");
+            String localizacao = rs.getString("localizacao");
+            String status = rs.getString("status");
+
+            Equipamento e = new Equipamento(id, nome, descricao, quantidade, categoria, localizacao, status);
+
+            equips.add(e);
+        }
+
+        if (equips.isEmpty()) {
+            return null;
+        }
+
+        return equips;
+    }
 
     public Equipamento pegarPorId(int id) throws SQLException {
         String sql = "SELECT * FROM equipamentos WHERE id = ?";
