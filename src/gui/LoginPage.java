@@ -1,7 +1,6 @@
 package gui;
 
 import dao.UsuarioDAO;
-import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import model.Usuario;
 
@@ -82,7 +81,7 @@ public class LoginPage extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    // Login liberado temporariamente
+    // Acao do login
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
 
         UsuarioDAO userDAO = new UsuarioDAO();
@@ -97,18 +96,16 @@ public class LoginPage extends javax.swing.JFrame {
                 
                 
                 if(user.getSenha().equals(pswSenha.getText())){
-                    JOptionPane.showMessageDialog(null, "Login realizado com sucesso");
+                    InitialPage initialPage = new InitialPage();
+                    initialPage.setVisible(true);
+                    dispose();
                 } else {
                     JOptionPane.showMessageDialog(null, "Usuário ou senha invalidos");
                 }
             }
-        } catch(SQLException e) {
+        } catch(Exception e) {
             JOptionPane.showMessageDialog(null, "Ocorreu um erro ao tentar fazer login: \n" + e);
         }
-        
-        InitialPage initialPage = new InitialPage();
-        initialPage.setVisible(true);
-        dispose();
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     public static void main(String args[]) {

@@ -17,10 +17,10 @@ public class EquipamentoDAO {
     }
 
     public ArrayList<Equipamento> listarPorNomes(String nome) throws SQLException {
-        String sql = "SELECT * FROM equipamentos WHERE nome = ?";
+        String sql = "SELECT * FROM equipamentos WHERE nome LIKE ?";
 
         PreparedStatement stmt = con.prepareStatement(sql);
-        stmt.setString(1, nome);
+        stmt.setString(1, "%" + nome + "%");
 
         ResultSet rs = stmt.executeQuery();
         ArrayList<Equipamento> equips = new ArrayList<Equipamento>();
@@ -132,7 +132,7 @@ public class EquipamentoDAO {
     }
     
     public void inserir(Equipamento equipamento) throws SQLException{
-        String sql = "INSERT INTO equipamentos VALUES(?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO equipamentos (nome, descricao, quantidade, categoria_id, localizacao, status) VALUES (?, ?, ?, ?, ?, ?)";
 
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setString(1, equipamento.getNome());
@@ -142,7 +142,7 @@ public class EquipamentoDAO {
         stmt.setString(5, equipamento.getLocalizacao());
         stmt.setString(6, equipamento.getStatus());
 
-        ResultSet rs = stmt.executeQuery();
+        stmt.executeUpdate();
     }
     
     public void deletarPorId(int id) throws SQLException{
@@ -151,7 +151,7 @@ public class EquipamentoDAO {
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setInt(1, id);
 
-        ResultSet rs = stmt.executeQuery();
+        stmt.executeUpdate();
     }
     
     public void atualizar(Equipamento equipamento) throws SQLException{
@@ -166,6 +166,6 @@ public class EquipamentoDAO {
         stmt.setString(6, equipamento.getStatus());
         stmt.setInt(7, equipamento.getId());
 
-        ResultSet rs = stmt.executeQuery();
+        stmt.executeUpdate();
     }
 }
