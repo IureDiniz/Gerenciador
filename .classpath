@@ -12,4 +12,8 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="tools"/>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.50.3.0.jar"/>
+<<<<<<< HEAD
+=======
+	<classpathentry kind="output" path="bin"/>
+>>>>>>> 5682864d0d67e116a0642a7d922d7b0ab61c4e52
 </classpath>
