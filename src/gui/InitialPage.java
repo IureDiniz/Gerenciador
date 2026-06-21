@@ -3,17 +3,24 @@ package gui;
 import dao.CategoriaDAO;
 import dao.EquipamentoDAO;
 import dao.UsuarioDAO;
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,6 +31,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -37,6 +45,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import model.Categoria;
 import model.Equipamento;
@@ -44,14 +53,19 @@ import model.Usuario;
 
 public class InitialPage extends JFrame {
 
-    private static final Color BACKGROUND = new Color(244, 247, 250);
+    private static final Color BACKGROUND = new Color(245, 245, 245);
     private static final Color PANEL = Color.WHITE;
-    private static final Color PRIMARY = new Color(22, 111, 96);
-    private static final Color PRIMARY_DARK = new Color(12, 82, 72);
-    private static final Color TEXT = new Color(32, 41, 55);
-    private static final Color MUTED = new Color(98, 110, 126);
-    private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 24);
-    private static final Font LABEL_FONT = new Font("Segoe UI", Font.PLAIN, 13);
+    private static final Color TITLE_BLUE = new Color(12, 94, 128);
+    private static final Color TABLE_BLUE = new Color(16, 104, 137);
+    private static final Color LIGHT_BLUE = new Color(183, 235, 255);
+    private static final Color ACTION_BLUE = new Color(31, 157, 213);
+    private static final Color SAVE_GREEN = new Color(0, 176, 80);
+    private static final Color DELETE_RED = new Color(232, 20, 56);
+    private static final Color DISABLED_GRAY = new Color(140, 140, 140);
+    private static final Color TEXT = new Color(16, 65, 83);
+    private static final Color MUTED = new Color(42, 83, 96);
+    private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 26);
+    private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 13);
 
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel contentPanel = new JPanel(cardLayout);
@@ -121,25 +135,51 @@ public class InitialPage extends JFrame {
 
     // Tela inicial
     private JPanel createHomePanel() {
-        JPanel panel = createScreen("Gerenciador de Estoque");
-        JPanel menu = new JPanel(new GridLayout(2, 3, 16, 16));
-        menu.setOpaque(false);
-        menu.setBorder(new EmptyBorder(30, 120, 120, 120));
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(BACKGROUND);
+        panel.setBorder(new EmptyBorder(42, 70, 70, 70));
 
-        menu.add(createHomeButton("Usuarios", "users"));
-        menu.add(createHomeButton("Historico", "history"));
-        menu.add(createHomeButton("Movimentacao", "movements"));
-        menu.add(createHomeButton("Equipamentos", "equipment"));
-        menu.add(createHomeButton("Relatorios", "reports"));
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        top.setOpaque(false);
+        JPanel quickButtons = new JPanel(new GridLayout(2, 1, 0, 16));
+        quickButtons.setOpaque(false);
+        quickButtons.add(createHomeTopButton("Usuarios", "users"));
+        quickButtons.add(createHomeTopButton("Historico", "history"));
+        top.add(quickButtons);
+        panel.add(top, BorderLayout.NORTH);
 
-        panel.add(menu, BorderLayout.CENTER);
+        JPanel center = new JPanel(new GridBagLayout());
+        center.setOpaque(false);
+
+        JLabel title = new JLabel("Sistema de Estoque", SwingConstants.CENTER);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 66));
+        title.setForeground(TITLE_BLUE);
+
+        JPanel tiles = new JPanel(new GridLayout(1, 3, 110, 0));
+        tiles.setOpaque(false);
+        tiles.add(createHomeTile("Movimentacao", "movements", "movement"));
+        tiles.add(createHomeTile("Equipamentos", "equipment", "equipment"));
+        tiles.add(createHomeTile("Relatorios", "reports", "report"));
+
+        GridBagConstraints titleConstraints = new GridBagConstraints();
+        titleConstraints.gridx = 0;
+        titleConstraints.gridy = 0;
+        titleConstraints.insets = new Insets(45, 0, 95, 0);
+        center.add(title, titleConstraints);
+
+        GridBagConstraints tileConstraints = new GridBagConstraints();
+        tileConstraints.gridx = 0;
+        tileConstraints.gridy = 1;
+        center.add(tiles, tileConstraints);
+
+        panel.add(center, BorderLayout.CENTER);
         return panel;
     }
 
     // Lista de usuarios
     private JPanel createUserListPanel() {
         JPanel panel = createScreen("Lista de Usuarios");
-        panel.add(createSearchBar("Pesquisar usuario", userSearchField, evt -> loadUsers()), BorderLayout.NORTH);
+        panel.add(createTopContent(panel, createSearchBar("Pesquisar usuario", userSearchField, evt -> loadUsers())), BorderLayout.NORTH);
         panel.add(wrapTable(userTable), BorderLayout.CENTER);
 
         JPanel buttons = createButtonPanel();
@@ -199,8 +239,8 @@ public class InitialPage extends JFrame {
     private JPanel createMovementListPanel() {
         JPanel panel = createScreen("Movimentacao");
         JTextField search = new JTextField(22);
-        panel.add(createSearchBar("Pesquisar movimentacao", search, evt -> {
-        }), BorderLayout.NORTH);
+        panel.add(createTopContent(panel, createSearchBar("Pesquisar movimentacao", search, evt -> {
+        })), BorderLayout.NORTH);
 
         DefaultTableModel model = createModel("Tipo", "Data", "Descricao");
         model.addRow(new Object[]{"ENTRADA", LocalDate.now(), "Entrada de equipamentos"});
@@ -269,7 +309,7 @@ public class InitialPage extends JFrame {
         buttons.add(createButton("Salvar", evt -> showScreen("newMovement")));
         buttons.add(createButton("Voltar", evt -> showScreen("newMovement")));
 
-        panel.add(createSearchBar("Pesquisar equipamento", search, evt -> loadMovementEquipment(search.getText())), BorderLayout.NORTH);
+        panel.add(createTopContent(panel, createSearchBar("Pesquisar equipamento", search, evt -> loadMovementEquipment(search.getText()))), BorderLayout.NORTH);
         panel.add(center, BorderLayout.CENTER);
         panel.add(buttons, BorderLayout.SOUTH);
         return panel;
@@ -278,13 +318,16 @@ public class InitialPage extends JFrame {
     // Lista de equipamentos
     private JPanel createEquipmentListPanel() {
         JPanel panel = createScreen("Lista de Equipamentos");
-        panel.add(createSearchBar("Pesquisar equipamento", equipmentSearchField, evt -> loadEquipment()), BorderLayout.NORTH);
+        panel.add(createTopContent(panel, createSearchBar("Pesquisar equipamento", equipmentSearchField, evt -> loadEquipment())), BorderLayout.NORTH);
         panel.add(wrapTable(equipmentTable), BorderLayout.CENTER);
 
         JPanel buttons = createButtonPanel();
         buttons.add(createButton("Novo", evt -> {
             clearEquipmentForm();
-            showScreen("newEquipment");
+            equipmentEditorMode = false;
+            equipmentInactivateButton.setVisible(false);
+            equipmentDeleteButton.setVisible(false);
+            showScreen("equipmentForm");
         }));
         buttons.add(createButton("Editar", evt -> openSelectedEquipment()));
         buttons.add(createButton("Categorias", evt -> showScreen("categorySelect")));
@@ -294,8 +337,8 @@ public class InitialPage extends JFrame {
     }
 
     // Formulario de equipamento
-    private JPanel createEquipmentFormPanel(boolean editor) {
-        JPanel panel = createScreen(editor ? "Editar Equipamento" : "Novo Equipamento");
+    private JPanel createEquipmentFormPanel() {
+        JPanel panel = createScreen("Novo ou Editar Equipamento");
         JPanel form = createFormPanel();
         equipmentDescriptionArea.setLineWrap(true);
         equipmentDescriptionArea.setWrapStyleWord(true);
@@ -308,12 +351,14 @@ public class InitialPage extends JFrame {
         addFormRow(form, "Descricao", new JScrollPane(equipmentDescriptionArea));
 
         JPanel buttons = createButtonPanel();
-        buttons.add(createButton("Salvar", evt -> saveEquipment(editor)));
+        buttons.add(createButton("Salvar", evt -> saveEquipment(equipmentEditorMode)));
         buttons.add(createButton("Cancelar", evt -> showScreen("equipment")));
-        if (editor) {
-            buttons.add(createButton("Inativar", evt -> inactivateEquipment()));
-            buttons.add(createButton("Excluir", evt -> deleteEquipment()));
-        }
+        equipmentInactivateButton = createButton("Inativar", evt -> inactivateEquipment());
+        equipmentDeleteButton = createButton("Excluir", evt -> deleteEquipment());
+        equipmentInactivateButton.setVisible(false);
+        equipmentDeleteButton.setVisible(false);
+        buttons.add(equipmentInactivateButton);
+        buttons.add(equipmentDeleteButton);
 
         panel.add(form, BorderLayout.CENTER);
         panel.add(buttons, BorderLayout.SOUTH);
@@ -324,7 +369,8 @@ public class InitialPage extends JFrame {
     private JPanel createCategoryListPanel() {
         JPanel panel = createScreen("Lista de Categorias");
         categoryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        panel.add(new JScrollPane(categoryList), BorderLayout.CENTER);
+        styleList(categoryList);
+        panel.add(wrapList(categoryList), BorderLayout.CENTER);
 
         JPanel buttons = createButtonPanel();
         buttons.add(createButton("Novo", evt -> createCategory()));
@@ -338,7 +384,8 @@ public class InitialPage extends JFrame {
         JPanel panel = createScreen("Selecionar Categoria");
         JList<CategoryItem> selectList = new JList<>(categoryListModel);
         selectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        panel.add(new JScrollPane(selectList), BorderLayout.CENTER);
+        styleList(selectList);
+        panel.add(wrapList(selectList), BorderLayout.CENTER);
 
         JPanel buttons = createButtonPanel();
         buttons.add(createButton("Aplicar", evt -> {
@@ -418,7 +465,10 @@ public class InitialPage extends JFrame {
                     userEmailField.setText(usuario.getEmail());
                     userPasswordField.setText(usuario.getSenha());
                     userTypeCombo.setSelectedItem(usuario.getTipo());
-                    showScreen("editUser");
+                    userEditorMode = true;
+                    userInactivateButton.setVisible(true);
+                    userDeleteButton.setVisible(true);
+                    showScreen("userForm");
                     return;
                 }
             }
@@ -542,7 +592,10 @@ public class InitialPage extends JFrame {
             equipmentDescriptionArea.setText(editingEquipment.getDescricao());
             equipmentStatusCombo.setSelectedItem(editingEquipment.getStatus());
             selectCategoryCombo(editingEquipment.getCategoria_id());
-            showScreen("editEquipment");
+            equipmentEditorMode = true;
+            equipmentInactivateButton.setVisible(true);
+            equipmentDeleteButton.setVisible(true);
+            showScreen("equipmentForm");
         } catch (Exception e) {
             showError("Nao foi possivel abrir o equipamento.", e);
         }
@@ -759,21 +812,30 @@ public class InitialPage extends JFrame {
         header.setOpaque(false);
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(TITLE_FONT);
-        titleLabel.setForeground(TEXT);
+        titleLabel.setForeground(TITLE_BLUE);
         header.add(titleLabel, BorderLayout.WEST);
-        header.add(createTopNavigation(), BorderLayout.EAST);
+        panel.putClientProperty("header", header);
         panel.add(header, BorderLayout.PAGE_START);
         return panel;
+    }
+
+    // Cabecalho com conteudo abaixo
+    private JPanel createTopContent(JPanel panel, Component component) {
+        JPanel top = new JPanel(new BorderLayout(0, 12));
+        top.setOpaque(false);
+        Object header = panel.getClientProperty("header");
+        if (header instanceof Component) {
+            top.add((Component) header, BorderLayout.NORTH);
+        }
+        top.add(component, BorderLayout.SOUTH);
+        return top;
     }
 
     // Navegacao superior
     private JPanel createTopNavigation() {
         JPanel nav = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
         nav.setOpaque(false);
-        nav.add(createSmallButton("Inicio", evt -> showScreen("home")));
-        nav.add(createSmallButton("Usuarios", evt -> showScreen("users")));
-        nav.add(createSmallButton("Movimentacao", evt -> showScreen("movements")));
-        nav.add(createSmallButton("Equipamentos", evt -> showScreen("equipment")));
+        nav.add(createSmallButton("Historico", evt -> showScreen("history")));
         nav.add(createSmallButton("Relatorios", evt -> showScreen("reports")));
         return nav;
     }
@@ -781,9 +843,55 @@ public class InitialPage extends JFrame {
     // Botao da tela inicial
     private JButton createHomeButton(String text, String screen) {
         JButton button = createButton(text, evt -> showScreen(screen));
-        button.setPreferredSize(new Dimension(180, 90));
-        button.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        button.setPreferredSize(new Dimension(140, 95));
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
         return button;
+    }
+
+    // Botao superior da tela inicial
+    private JButton createHomeTopButton(String text, String screen) {
+        JButton button = new JButton(text);
+        button.setPreferredSize(new Dimension(260, 64));
+        button.setBackground(LIGHT_BLUE);
+        button.setForeground(TITLE_BLUE);
+        button.setOpaque(true);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 30));
+        button.addActionListener(evt -> showScreen(screen));
+        return button;
+    }
+
+    // Card da tela inicial
+    private JPanel createHomeTile(String text, String screen, String iconType) {
+        JPanel tile = new JPanel(new BorderLayout(0, 10));
+        tile.setOpaque(false);
+        tile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        JButton iconButton = new JButton(new HomeIcon(iconType));
+        iconButton.setPreferredSize(new Dimension(260, 220));
+        iconButton.setBackground(ACTION_BLUE);
+        iconButton.setOpaque(true);
+        iconButton.setFocusPainted(false);
+        iconButton.setBorderPainted(false);
+        iconButton.addActionListener(evt -> showScreen(screen));
+
+        JLabel label = new JLabel(text, SwingConstants.CENTER);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 32));
+        label.setForeground(TITLE_BLUE);
+
+        MouseAdapter clickAction = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                showScreen(screen);
+            }
+        };
+        tile.addMouseListener(clickAction);
+        label.addMouseListener(clickAction);
+
+        tile.add(iconButton, BorderLayout.CENTER);
+        tile.add(label, BorderLayout.SOUTH);
+        return tile;
     }
 
     // Barra de pesquisa
@@ -792,6 +900,7 @@ public class InitialPage extends JFrame {
         panel.setOpaque(false);
         field.setFont(LABEL_FONT);
         field.setToolTipText(placeholder);
+        styleInput(field);
         JButton searchButton = createButton("Pesquisar", action);
         panel.add(field, BorderLayout.CENTER);
         panel.add(searchButton, BorderLayout.EAST);
@@ -802,10 +911,7 @@ public class InitialPage extends JFrame {
     private JPanel createFormPanel() {
         JPanel form = new JPanel(new GridBagLayout());
         form.setBackground(PANEL);
-        form.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(224, 229, 235)),
-                new EmptyBorder(24, 120, 24, 120)
-        ));
+        form.setBorder(new EmptyBorder(34, 150, 34, 150));
         return form;
     }
 
@@ -831,25 +937,27 @@ public class InitialPage extends JFrame {
         fieldConstraints.insets = new Insets(8, 0, 8, 0);
 
         form.add(label, labelConstraints);
+        styleInput(field);
         form.add(field, fieldConstraints);
     }
 
     // Painel de botoes
     private JPanel createButtonPanel() {
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         buttons.setOpaque(false);
-        buttons.setBorder(new EmptyBorder(4, 0, 0, 0));
+        buttons.setBorder(new EmptyBorder(6, 0, 0, 0));
         return buttons;
     }
 
     // Botao principal
     private JButton createButton(String text, java.awt.event.ActionListener action) {
         JButton button = new JButton(text);
-        button.setBackground(PRIMARY);
+        button.setBackground(getButtonColor(text));
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        button.setBorder(new EmptyBorder(8, 14, 8, 14));
+        button.setOpaque(true);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        button.setBorder(new EmptyBorder(6, 14, 6, 14));
         button.addActionListener(action);
         return button;
     }
@@ -857,7 +965,8 @@ public class InitialPage extends JFrame {
     // Botao pequeno
     private JButton createSmallButton(String text, java.awt.event.ActionListener action) {
         JButton button = createButton(text, action);
-        button.setBackground(PRIMARY_DARK);
+        button.setBackground(LIGHT_BLUE);
+        button.setForeground(TITLE_BLUE);
         button.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         return button;
     }
@@ -876,18 +985,60 @@ public class InitialPage extends JFrame {
     private JTable createTable(DefaultTableModel model) {
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.setRowHeight(28);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        table.getTableHeader().setBackground(new Color(232, 238, 244));
-        table.getTableHeader().setForeground(TEXT);
+        table.setRowHeight(26);
+        table.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        table.setBackground(LIGHT_BLUE);
+        table.setForeground(new Color(15, 54, 67));
+        table.setGridColor(TABLE_BLUE);
+        table.setSelectionBackground(new Color(135, 218, 250));
+        table.setSelectionForeground(TEXT);
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+        table.getTableHeader().setBackground(TABLE_BLUE);
+        table.getTableHeader().setForeground(Color.WHITE);
+        table.getTableHeader().setOpaque(true);
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int column) {
+                Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    component.setBackground(LIGHT_BLUE);
+                    component.setForeground(new Color(15, 54, 67));
+                }
+                setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, TABLE_BLUE));
+                return component;
+            }
+        });
         return table;
     }
 
     // Tabela com borda
     private JScrollPane wrapTable(JTable table) {
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(224, 229, 235)));
+        scrollPane.getViewport().setBackground(TABLE_BLUE);
+        scrollPane.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(TABLE_BLUE, 10),
+                BorderFactory.createLineBorder(TABLE_BLUE, 1)
+        ));
+        return scrollPane;
+    }
+
+    // Lista com estilo do Figma
+    private void styleList(JList<?> list) {
+        list.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        list.setBackground(LIGHT_BLUE);
+        list.setForeground(TEXT);
+        list.setSelectionBackground(new Color(135, 218, 250));
+        list.setSelectionForeground(TEXT);
+        list.setFixedCellHeight(28);
+        list.setBorder(BorderFactory.createLineBorder(TABLE_BLUE, 2));
+    }
+
+    // Lista dentro do painel azul
+    private JScrollPane wrapList(JList<?> list) {
+        JScrollPane scrollPane = new JScrollPane(list);
+        scrollPane.getViewport().setBackground(TABLE_BLUE);
+        scrollPane.setBorder(BorderFactory.createLineBorder(TABLE_BLUE, 10));
         return scrollPane;
     }
 
@@ -903,9 +1054,130 @@ public class InitialPage extends JFrame {
         return panel;
     }
 
+    // Campos azul claro
+    private void styleInput(Component field) {
+        if (field instanceof JTextField) {
+            JTextField textField = (JTextField) field;
+            textField.setBackground(LIGHT_BLUE);
+            textField.setForeground(TEXT);
+            textField.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 6));
+        } else if (field instanceof JTextArea) {
+            JTextArea textArea = (JTextArea) field;
+            textArea.setBackground(LIGHT_BLUE);
+            textArea.setForeground(TEXT);
+            textArea.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 6));
+        } else if (field instanceof JComboBox) {
+            JComboBox<?> comboBox = (JComboBox<?>) field;
+            comboBox.setBackground(LIGHT_BLUE);
+            comboBox.setForeground(TEXT);
+        } else if (field instanceof JScrollPane) {
+            JScrollPane scrollPane = (JScrollPane) field;
+            scrollPane.setBorder(BorderFactory.createLineBorder(LIGHT_BLUE));
+            Component view = scrollPane.getViewport().getView();
+            styleInput(view);
+        }
+    }
+
+    // Cor do botao por acao
+    private Color getButtonColor(String text) {
+        if ("Salvar".equals(text)) {
+            return SAVE_GREEN;
+        }
+        if ("Excluir".equals(text)) {
+            return DELETE_RED;
+        }
+        if ("Inativar".equals(text)) {
+            return DISABLED_GRAY;
+        }
+        return ACTION_BLUE;
+    }
+
     // Mensagem de erro
     private void showError(String message, Exception e) {
         JOptionPane.showMessageDialog(this, message + "\n" + e.getMessage());
+    }
+
+    // Icones da tela inicial
+    private static class HomeIcon implements Icon {
+        private final String type;
+
+        private HomeIcon(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public int getIconWidth() {
+            return 100;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 100;
+        }
+
+        @Override
+        public void paintIcon(Component component, Graphics graphics, int x, int y) {
+            Graphics2D g = (Graphics2D) graphics.create();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(Color.BLACK);
+            g.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g.translate(x, y);
+
+            if ("movement".equals(type)) {
+                paintMovement(g);
+            } else if ("equipment".equals(type)) {
+                paintEquipment(g);
+            } else {
+                paintReport(g);
+            }
+
+            g.dispose();
+        }
+
+        private void paintMovement(Graphics2D g) {
+            g.drawArc(18, 18, 64, 64, 30, 85);
+            g.drawLine(82, 30, 90, 42);
+            g.drawLine(82, 30, 68, 32);
+
+            g.drawArc(18, 18, 64, 64, 150, 85);
+            g.drawLine(18, 26, 34, 22);
+            g.drawLine(18, 26, 22, 42);
+
+            g.drawArc(18, 18, 64, 64, 270, 85);
+            g.drawLine(38, 88, 30, 72);
+            g.drawLine(38, 88, 54, 84);
+        }
+
+        private void paintEquipment(Graphics2D g) {
+            g.drawRect(38, 36, 24, 24);
+            g.drawOval(30, 28, 40, 40);
+            g.drawLine(50, 12, 50, 28);
+            g.drawLine(50, 68, 50, 86);
+            g.drawLine(14, 50, 30, 50);
+            g.drawLine(70, 50, 86, 50);
+
+            g.drawLine(18, 78, 38, 58);
+            g.drawLine(12, 72, 24, 84);
+            g.drawLine(62, 58, 82, 78);
+            g.drawLine(76, 84, 88, 72);
+
+            g.drawRect(20, 12, 40, 14);
+            g.drawLine(60, 19, 86, 19);
+            g.drawLine(86, 15, 94, 19);
+            g.drawLine(86, 23, 94, 19);
+        }
+
+        private void paintReport(Graphics2D g) {
+            g.drawRect(24, 12, 48, 64);
+            g.drawLine(24, 12, 38, 26);
+            g.drawLine(38, 26, 38, 12);
+            g.drawLine(24, 12, 38, 12);
+            g.drawLine(34, 34, 62, 34);
+            g.drawLine(34, 44, 62, 44);
+            g.drawLine(34, 54, 62, 54);
+            g.drawRect(48, 62, 14, 10);
+            g.drawRect(36, 24, 48, 64);
+        }
     }
 
     // Item de categoria

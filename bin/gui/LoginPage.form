@@ -41,7 +41,6 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
                       <Component id="btnEntrar" min="-2" pref="141" max="-2" attributes="0"/>
-                      <EmptySpace pref="54" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" pref="115" max="-2" attributes="0"/>
