@@ -1,7 +1,9 @@
-package dao;
+package integration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import dao.UsuarioDAO;
 import model.Usuario;
 import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;

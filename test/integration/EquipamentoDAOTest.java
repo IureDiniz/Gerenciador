@@ -1,7 +1,9 @@
-package dao;
+package integration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import dao.EquipamentoDAO;
 import model.Equipamento;
 import java.sql.SQLException;
 import java.util.ArrayList;

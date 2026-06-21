@@ -1,6 +1,9 @@
-package model;
+package unit;
 
 import org.junit.jupiter.api.Test;
+
+import model.Equipamento;
+
 import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
 
