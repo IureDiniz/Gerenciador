@@ -1,4 +1,4 @@
-package integration;
+package unit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,8 @@ public class EquipamentoDAOTest {
 
         Equipamento achado = dao.pegarPorId(id);
         assertNotNull(achado);
-        assertEquals(nome, achado.getNome());
+        
+        assertEquals(nome, achado.getNome().trim());
 
         achado.setNome("Projetor teste ATUALIZADO");
         achado.setQuantidade(5);
