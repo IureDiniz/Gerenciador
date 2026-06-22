@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EquipamentoDAOTest {
+public class EquipamentoTest {
 
     private EquipamentoDAO dao;
 
