@@ -11,7 +11,7 @@ import model.Usuario;
 
 
 public class UsuarioDAO {
-    private Connection con;
+    private final Connection con;
     
     public UsuarioDAO(){
         con = Database.getInstance().getConnection();

@@ -14,7 +14,6 @@ public class LoginPage extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -95,7 +94,7 @@ public class LoginPage extends javax.swing.JFrame {
             } else {
                 
                 
-                if(user.getSenha().equals(pswSenha.getText())){
+                if(user.getSenha().equals(new String(pswSenha.getPassword()))){
                     InitialPage initialPage = new InitialPage();
                     initialPage.setVisible(true);
                     dispose();

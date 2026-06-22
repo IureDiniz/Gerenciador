@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 
 public class CategoriaDAO {
     
-    private Connection con;
+    private final Connection con;
 
     public CategoriaDAO() {
         con = Database.getInstance().getConnection();

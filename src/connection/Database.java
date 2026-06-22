@@ -1,5 +1,9 @@
 package connection;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,23 +14,65 @@ import javax.swing.JOptionPane;
 public class Database {
     private static Database INSTANCE = null;
 
-    Connection connection = null;
+    private Connection connection = null;
 
     public Database() {
         try {
-
             Class.forName("org.sqlite.JDBC");
 
-            this.connection = DriverManager.getConnection("jdbc:sqlite:tools/Estoque.db");
+            Path databasePath = prepareDatabasePath();
+            this.connection = DriverManager.getConnection("jdbc:sqlite:" + databasePath);
 
             createDatabase();
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Ocorreu o seguinte erro ao tentar criar uma conexão: \n" + e);
+            JOptionPane.showMessageDialog(null, "Ocorreu o seguinte erro ao tentar criar uma conexao: \n" + e);
         } catch (ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(null, "Driver do banco de dados não encontrado: \n" + e);
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Driver do banco de dados nao encontrado: \n" + e);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Nao foi possivel preparar o arquivo do banco de dados: \n" + e);
         }
+    }
+
+    private Path prepareDatabasePath() throws IOException {
+        Path appDataDir = getAppDataDirectory();
+        Files.createDirectories(appDataDir);
+
+        Path targetDatabase = appDataDir.resolve("Estoque.db");
+        if (!Files.exists(targetDatabase)) {
+            Path sourceDatabase = findBundledDatabase();
+            if (sourceDatabase != null) {
+                Files.copy(sourceDatabase, targetDatabase);
+            }
+        }
+
+        return targetDatabase.toAbsolutePath();
+    }
+
+    private Path getAppDataDirectory() {
+        String appData = System.getenv("APPDATA");
+        if (appData != null && !appData.isBlank()) {
+            return Paths.get(appData, "GerenciadorEstoque");
+        }
+
+        return Paths.get(System.getProperty("user.home"), ".gerenciador-estoque");
+    }
+
+    private Path findBundledDatabase() {
+        Path[] candidates = {
+            Paths.get("tools", "Estoque.db"),
+            Paths.get("app", "tools", "Estoque.db"),
+            Paths.get(System.getProperty("user.dir"), "tools", "Estoque.db"),
+            Paths.get(System.getProperty("user.dir"), "app", "tools", "Estoque.db")
+        };
+
+        for (Path candidate : candidates) {
+            if (Files.exists(candidate)) {
+                return candidate;
+            }
+        }
+
+        return null;
     }
 
     private void createDatabase() throws SQLException {
@@ -85,5 +131,4 @@ public class Database {
     public void closeConnection() throws SQLException {
         this.connection.close();
     }
-
 }

@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 
 public class EquipamentoDAO {
 
-    private Connection con;
+    private final Connection con;
 
     public EquipamentoDAO() {
         con = Database.getInstance().getConnection();
@@ -23,7 +23,7 @@ public class EquipamentoDAO {
         stmt.setString(1, "%" + nome + "%");
 
         ResultSet rs = stmt.executeQuery();
-        ArrayList<Equipamento> equips = new ArrayList<Equipamento>();
+        ArrayList<Equipamento> equips = new ArrayList<>();
 
         while (rs.next()) {
             int id = rs.getInt("id");
@@ -53,7 +53,7 @@ public class EquipamentoDAO {
         stmt.setInt(1, categoria_id);
 
         ResultSet rs = stmt.executeQuery();
-        ArrayList<Equipamento> equips = new ArrayList<Equipamento>();
+        ArrayList<Equipamento> equips = new ArrayList<>();
 
         while (rs.next()) {
             int id = rs.getInt("id");
@@ -82,7 +82,7 @@ public class EquipamentoDAO {
         PreparedStatement stmt = con.prepareStatement(sql);
 
         ResultSet rs = stmt.executeQuery();
-        ArrayList<Equipamento> equips = new ArrayList<Equipamento>();
+        ArrayList<Equipamento> equips = new ArrayList<>();
 
         while (rs.next()) {
             int id = rs.getInt("id");

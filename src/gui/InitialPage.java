@@ -440,7 +440,7 @@ public class InitialPage extends JFrame {
                     });
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel carregar usuarios.", e);
         }
     }
@@ -469,7 +469,7 @@ public class InitialPage extends JFrame {
                     return;
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel abrir o usuario.", e);
         }
     }
@@ -495,7 +495,7 @@ public class InitialPage extends JFrame {
             }
 
             showScreen("users");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel salvar o usuario.", e);
         }
     }
@@ -508,7 +508,7 @@ public class InitialPage extends JFrame {
         try {
             usuarioDAO.inativarPorId(editingUser.getId());
             showScreen("users");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel inativar o usuario.", e);
         }
     }
@@ -521,7 +521,7 @@ public class InitialPage extends JFrame {
         try {
             usuarioDAO.deletarPorId(editingUser.getId());
             showScreen("users");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel excluir o usuario.", e);
         }
     }
@@ -556,7 +556,7 @@ public class InitialPage extends JFrame {
                     equipamento.getStatus()
                 });
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel carregar equipamentos.", e);
         }
     }
@@ -593,7 +593,7 @@ public class InitialPage extends JFrame {
             equipmentInactivateButton.setVisible(true);
             equipmentDeleteButton.setVisible(true);
             showScreen("equipmentForm");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel abrir o equipamento.", e);
         }
     }
@@ -627,7 +627,7 @@ public class InitialPage extends JFrame {
             showScreen("equipment");
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Quantidade deve ser um numero.");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel salvar o equipamento.", e);
         }
     }
@@ -641,7 +641,7 @@ public class InitialPage extends JFrame {
             editingEquipment.setStatus("Inativo");
             equipamentoDAO.atualizar(editingEquipment);
             showScreen("equipment");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel inativar o equipamento.", e);
         }
     }
@@ -654,7 +654,7 @@ public class InitialPage extends JFrame {
         try {
             equipamentoDAO.deletarPorId(editingEquipment.getId());
             showScreen("equipment");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel excluir o equipamento.", e);
         }
     }
@@ -686,7 +686,7 @@ public class InitialPage extends JFrame {
             }
 
             equipmentCategoryCombo.setModel(comboModel);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel carregar categorias.", e);
         }
     }
@@ -700,7 +700,7 @@ public class InitialPage extends JFrame {
         try {
             categoriaDAO.inserir(new Categoria(0, name.trim()));
             loadCategories();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel salvar a categoria.", e);
         }
     }
@@ -742,7 +742,7 @@ public class InitialPage extends JFrame {
                     equipamento.getQuantidade()
                 });
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel carregar equipamentos.", e);
         }
     }
@@ -779,22 +779,23 @@ public class InitialPage extends JFrame {
             model.addRow(new Object[]{"Usuarios cadastrados: " + users});
             model.addRow(new Object[]{"Equipamentos cadastrados: " + equipmentCount});
             model.addRow(new Object[]{"Categoria selecionada: " + (selectedCategoryFilter == null ? "TODOS" : selectedCategoryFilter.name)});
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showError("Nao foi possivel carregar relatorios.", e);
         }
     }
 
     // Troca de tela
     private void showScreen(String screen) {
-        if ("users".equals(screen)) {
-            loadUsers();
-        } else if ("equipment".equals(screen)) {
-            loadCategories();
-            loadEquipment();
-        } else if ("categories".equals(screen) || "categorySelect".equals(screen)) {
-            loadCategories();
-        } else if ("movementEquipment".equals(screen)) {
-            loadMovementEquipment("");
+        switch (screen) {
+            case "users" -> loadUsers();
+            case "equipment" -> {
+                loadCategories();
+                loadEquipment();
+            }
+            case "categories", "categorySelect" -> loadCategories();
+            case "movementEquipment" -> loadMovementEquipment("");
+            default -> {
+            }
         }
         cardLayout.show(contentPanel, screen);
     }
@@ -821,28 +822,11 @@ public class InitialPage extends JFrame {
         JPanel top = new JPanel(new BorderLayout(0, 12));
         top.setOpaque(false);
         Object header = panel.getClientProperty("header");
-        if (header instanceof Component) {
-            top.add((Component) header, BorderLayout.NORTH);
+        if (header instanceof Component headerComponent) {
+            top.add(headerComponent, BorderLayout.NORTH);
         }
         top.add(component, BorderLayout.SOUTH);
         return top;
-    }
-
-    // Navegacao superior
-    private JPanel createTopNavigation() {
-        JPanel nav = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
-        nav.setOpaque(false);
-        nav.add(createSmallButton("Historico", evt -> showScreen("history")));
-        nav.add(createSmallButton("Relatorios", evt -> showScreen("reports")));
-        return nav;
-    }
-
-    // Botao da tela inicial
-    private JButton createHomeButton(String text, String screen) {
-        JButton button = createButton(text, evt -> showScreen(screen));
-        button.setPreferredSize(new Dimension(140, 95));
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        return button;
     }
 
     // Botao superior da tela inicial
@@ -893,14 +877,11 @@ public class InitialPage extends JFrame {
 
     // Carrega icones da tela inicial
     private ImageIcon loadHomeIcon(String iconType) {
-        String fileName;
-        if ("movement".equals(iconType)) {
-            fileName = "movimentacao.png";
-        } else if ("equipment".equals(iconType)) {
-            fileName = "equipamentos.png";
-        } else {
-            fileName = "relatorios.png";
-        }
+        String fileName = switch (iconType) {
+            case "movement" -> "movimentacao.png";
+            case "equipment" -> "equipamentos.png";
+            default -> "relatorios.png";
+        };
 
         java.net.URL resource = getClass().getResource("/gui/icons/" + fileName);
         if (resource == null) {
@@ -1073,22 +1054,18 @@ public class InitialPage extends JFrame {
 
     // Campos azul claro
     private void styleInput(Component field) {
-        if (field instanceof JTextField) {
-            JTextField textField = (JTextField) field;
+        if (field instanceof JTextField textField) {
             textField.setBackground(LIGHT_BLUE);
             textField.setForeground(TEXT);
             textField.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 6));
-        } else if (field instanceof JTextArea) {
-            JTextArea textArea = (JTextArea) field;
+        } else if (field instanceof JTextArea textArea) {
             textArea.setBackground(LIGHT_BLUE);
             textArea.setForeground(TEXT);
             textArea.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 6));
-        } else if (field instanceof JComboBox) {
-            JComboBox<?> comboBox = (JComboBox<?>) field;
+        } else if (field instanceof JComboBox<?> comboBox) {
             comboBox.setBackground(LIGHT_BLUE);
             comboBox.setForeground(TEXT);
-        } else if (field instanceof JScrollPane) {
-            JScrollPane scrollPane = (JScrollPane) field;
+        } else if (field instanceof JScrollPane scrollPane) {
             scrollPane.setBorder(BorderFactory.createLineBorder(LIGHT_BLUE));
             Component view = scrollPane.getViewport().getView();
             styleInput(view);
@@ -1112,89 +1089,6 @@ public class InitialPage extends JFrame {
     // Mensagem de erro
     private void showError(String message, Exception e) {
         JOptionPane.showMessageDialog(this, message + "\n" + e.getMessage());
-    }
-
-    // Icones da tela inicial
-    private static class HomeIcon implements Icon {
-        private final String type;
-
-        private HomeIcon(String type) {
-            this.type = type;
-        }
-
-        @Override
-        public int getIconWidth() {
-            return 100;
-        }
-
-        @Override
-        public int getIconHeight() {
-            return 100;
-        }
-
-        @Override
-        public void paintIcon(Component component, Graphics graphics, int x, int y) {
-            Graphics2D g = (Graphics2D) graphics.create();
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g.setColor(Color.BLACK);
-            g.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            g.translate(x, y);
-
-            if ("movement".equals(type)) {
-                paintMovement(g);
-            } else if ("equipment".equals(type)) {
-                paintEquipment(g);
-            } else {
-                paintReport(g);
-            }
-
-            g.dispose();
-        }
-
-        private void paintMovement(Graphics2D g) {
-            g.drawArc(18, 18, 64, 64, 30, 85);
-            g.drawLine(82, 30, 90, 42);
-            g.drawLine(82, 30, 68, 32);
-
-            g.drawArc(18, 18, 64, 64, 150, 85);
-            g.drawLine(18, 26, 34, 22);
-            g.drawLine(18, 26, 22, 42);
-
-            g.drawArc(18, 18, 64, 64, 270, 85);
-            g.drawLine(38, 88, 30, 72);
-            g.drawLine(38, 88, 54, 84);
-        }
-
-        private void paintEquipment(Graphics2D g) {
-            g.drawRect(38, 36, 24, 24);
-            g.drawOval(30, 28, 40, 40);
-            g.drawLine(50, 12, 50, 28);
-            g.drawLine(50, 68, 50, 86);
-            g.drawLine(14, 50, 30, 50);
-            g.drawLine(70, 50, 86, 50);
-
-            g.drawLine(18, 78, 38, 58);
-            g.drawLine(12, 72, 24, 84);
-            g.drawLine(62, 58, 82, 78);
-            g.drawLine(76, 84, 88, 72);
-
-            g.drawRect(20, 12, 40, 14);
-            g.drawLine(60, 19, 86, 19);
-            g.drawLine(86, 15, 94, 19);
-            g.drawLine(86, 23, 94, 19);
-        }
-
-        private void paintReport(Graphics2D g) {
-            g.drawRect(24, 12, 48, 64);
-            g.drawLine(24, 12, 38, 26);
-            g.drawLine(38, 26, 38, 12);
-            g.drawLine(24, 12, 38, 12);
-            g.drawLine(34, 34, 62, 34);
-            g.drawLine(34, 44, 62, 44);
-            g.drawLine(34, 54, 62, 54);
-            g.drawRect(48, 62, 14, 10);
-            g.drawRect(36, 24, 48, 64);
-        }
     }
 
     // Item de categoria
