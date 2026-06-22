@@ -3,7 +3,6 @@ package gui;
 import dao.CategoriaDAO;
 import dao.EquipamentoDAO;
 import dao.UsuarioDAO;
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -12,13 +11,11 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Insets;
-import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
@@ -31,7 +28,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -868,7 +865,7 @@ public class InitialPage extends JFrame {
         tile.setOpaque(false);
         tile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        JButton iconButton = new JButton(new HomeIcon(iconType));
+        JButton iconButton = new JButton(loadHomeIcon(iconType));
         iconButton.setPreferredSize(new Dimension(260, 220));
         iconButton.setBackground(ACTION_BLUE);
         iconButton.setOpaque(true);
@@ -892,6 +889,26 @@ public class InitialPage extends JFrame {
         tile.add(iconButton, BorderLayout.CENTER);
         tile.add(label, BorderLayout.SOUTH);
         return tile;
+    }
+
+    // Carrega icones da tela inicial
+    private ImageIcon loadHomeIcon(String iconType) {
+        String fileName;
+        if ("movement".equals(iconType)) {
+            fileName = "movimentacao.png";
+        } else if ("equipment".equals(iconType)) {
+            fileName = "equipamentos.png";
+        } else {
+            fileName = "relatorios.png";
+        }
+
+        java.net.URL resource = getClass().getResource("/gui/icons/" + fileName);
+        if (resource == null) {
+            return new ImageIcon();
+        }
+
+        Image image = new ImageIcon(resource).getImage().getScaledInstance(104, 104, Image.SCALE_SMOOTH);
+        return new ImageIcon(image);
     }
 
     // Barra de pesquisa
